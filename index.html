@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پیش‌نمایش زنده افزونه قوانین پیشرفته اسنپ‌پی ([PayTune SnappPay)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-muted: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #64748b;
+      --border-color: #e2e8f0;
+      --primary: #008efa;
+      --primary-hover: #0273cc;
+      --primary-soft: #eff6ff;
+      --success: #15803d;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .brand span {
+      color: var(--primary);
+    }
+
+    .scenario-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: var(--bg-muted);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-dark {
+      background: var(--text-main);
+      color: #ffffff;
+      border-color: var(--text-main);
+    }
+
+    .btn-dark:hover {
+      background: #1e293b;
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: 24px auto;
+      padding: 0 20px 40px;
+    }
+
+    .hero {
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 992px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-header h2 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .card-header span {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .section-block {
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-block:last-child {
+      padding-bottom: 0;
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 576px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .switch-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+
+    .switch-box:hover {
+      background: #f8fafc;
+    }
+
+    .switch-box input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 3px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .switch-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .switch-desc {
+      font-size: 11.5px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .field-group {
+      margin-bottom: 10px;
+    }
+
+    .field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .input, .select {
+      width: 100%;
+      font-family: inherit;
+      font-size: 13px;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .input:focus, .select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0, 142, 250, 0.15);
+    }
+
+    .chips-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+      background: #ffffff;
+    }
+
+    .chip-check.active {
+      background: var(--primary-soft);
+      border-color: #93c5fd;
+      color: #1e3a8a;
+      font-weight: 600;
+    }
+
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .product-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+    }
+
+    .product-item.in-cart {
+      background: #f8fafc;
+      border-color: #93c5fd;
+    }
+
+    .product-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .product-meta {
+      font-size: 11.5px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .meta-highlight-sale {
+      color: var(--warning);
+      font-weight: 700;
+    }
+
+    .meta-highlight-cat {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .notice-box {
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      margin-bottom: 14px;
+    }
+
+    .notice-warning {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning);
+    }
+
+    .notice-error {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+    }
+
+    .notice-success {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+    }
+
+    .coupon-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      background: var(--bg-muted);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .coupon-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 18px;
+      font-size: 13px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .order-table th, .order-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: right;
+    }
+
+    .order-table th {
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .order-table td.price-col, .order-table th.price-col {
+      text-align: left;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .row-fee {
+      background: var(--primary-soft);
+      color: #1e3a8a;
+      font-weight: 600;
+    }
+
+    .row-discount {
+      background: var(--success-bg);
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .row-total {
+      background: #f1f5f9;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .gateway-box {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .gateway-box.selected {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+    }
+
+    .gateway-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .gateway-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13.5px;
+    }
+
+    .gateway-details {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #bfdbfe;
+      font-size: 12px;
+      color: #1e3a8a;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .gateway-disabled-banner {
+      border: 1px dashed #cbd5e1;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar with One-Click Preset Scenarios -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#" class="brand">پیش‌نمایش زنده <span>PayTune SnappPay</span></a>
+      <div class="scenario-bar">
+        <span style="font-size:12px;color:var(--text-muted);">سناریوهای آماده تست سریع:</span>
+        <button type="button" class="btn" onclick="applyScenario('normal')">۱. خرید عادی + کارمزد</button>
+        <button type="button" class="btn" onclick="applyScenario('coupon')">۲. تست حذف خودکار کد تخفیف</button>
+        <button type="button" class="btn" onclick="applyScenario('onsale')">۳. تست محدودیت کالای حراج</button>
+        <button type="button" class="btn" onclick="applyScenario('category')">۴. تست دسته‌بندی غیرمجاز (طلا)</button>
+        <button type="button" class="btn" onclick="applyScenario('friday')">۵. تست روز غیرمجاز (جمعه)</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero">
+      <h1>شبیه‌ساز تعاملی افزونه «قوانین پیشرفته اسنپ‌پی»</h1>
+      <p>در ستون راست قوانین مدیریت فروشگاه را تغییر دهید و در ستون چپ بلافاصله رفتار درگاه اسنپ‌پی، کارمزد و کد تخفیف را در صفحه تسویه‌حساب مشتری مشاهده کنید.</p>
+    </div>
+
+    <div class="workspace-grid">
+      <!-- Right Column: Admin Rules Configuration -->
+      <section class="card" aria-label="پنل تنظیمات قوانین پیشرفته اسنپ‌پی">
+        <div class="card-header">
+          <h2>۱. پنل تنظیمات مدیر فروشگاه (قوانین پیشرفته اسنپ‌پی)</h2>
+          <span>تغییرات آنی اعمال می‌شوند</span>
+        </div>
+        <div class="card-body">
+
+          <!-- Coupon & Fee Switches -->
+          <div class="section-block">
+            <div class="section-title">کد تخفیف و کارمزد اقساطی</div>
+            <div class="form-grid-2" style="margin-bottom:12px;">
+              <label class="switch-box">
+                <input type="checkbox" id="rule-disable-coupons" checked onchange="syncFromUI()" />
+                <div>
+                  <div class="switch-label">غیرفعال‌سازی کد تخفیف</div>
+                  <div class="switch-desc">حذف خودکار کوپن با انتخاب اسنپ‌پی</div>
+                </div>
+              </label>
+
+              <label class="switch-box">
+                <input type="checkbox" id="rule-fee-enabled" checked onchange="syncFromUI()" />
+                <div>
+                  <div class="switch-label">افزودن درصد کارمزد</div>
+                  <div class="switch-desc">محاسبه کارمزد خرید اقساطی روی فاکتور</div>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="field-group">
+                <label class="field-label" for="rule-fee-title">عنوان کارمزد در فاکتور</label>
+                <input type="text" id="rule-fee-title" class="input" value="کارمزد خرید اقساطی اسنپ‌پی" oninput="syncFromUI()" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="rule-fee-percent">درصد کارمزد افزایشی (%)</label>
+                <input type="number" id="rule-fee-percent" class="input" value="4.5" min="0" max="100" step="0.5" oninput="syncFromUI()" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Sale & Category Restrictions -->
+          <div class="section-block">
+            <div class="section-title">محدودیت محصولات حراج و دسته‌بندی‌ها</div>
+            <label class="switch-box" style="margin-bottom:12px;">
+              <input type="checkbox" id="rule-disable-onsale" checked onchange="syncFromUI()" />
+              <div>
+                <div class="switch-label">غیرفعال‌سازی درگاه برای محصولات حراج (فروش ویژه)</div>
+                <div class="switch-desc">در صورت وجود کالای حراج در سبد خرید، درگاه اسنپ‌پی مخفی می‌شود</div>
+              </div>
+            </label>
+
+            <div class="field-group">
+              <label class="field-label" for="rule-cat-mode">نوع شرط دسته‌بندی</label>
+              <select id="rule-cat-mode" class="select" onchange="syncFromUI()">
+                <option value="none">بدون محدودیت دسته‌بندی</option>
+                <option value="disallowed" selected>غیرمجاز برای دسته‌های انتخاب‌شده (لیست سیاه)</option>
+                <option value="allowed_only">فقط مجاز برای دسته‌های انتخاب‌شده (لیست سفید)</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">دسته‌بندی‌های انتخاب‌شده:</span>
+              <div class="chips-grid" id="categories-chips"></div>
+            </div>
+          </div>
+
+          <!-- Min/Max Amount & Allowed Days -->
+          <div class="section-block">
+            <div class="section-title">کف و سقف مبلغ فاکتور و روزهای مجاز هفته</div>
+            <div class="form-grid-2" style="margin-bottom:12px;">
+              <div class="field-group">
+                <label class="field-label" for="rule-min-amount">حداقل مبلغ سفارش (تومان)</label>
+                <input type="number" id="rule-min-amount" class="input" value="1000000" step="500000" oninput="syncFromUI()" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="rule-max-amount">حداکثر مبلغ سفارش (تومان)</label>
+                <input type="number" id="rule-max-amount" class="input" value="50000000" step="1000000" oninput="syncFromUI()" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">روزهای مجاز هفته برای خرید اقساطی:</span>
+              <div class="chips-grid" id="weekdays-chips"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Left Column: Live Customer Checkout Preview -->
+      <section class="card" aria-label="پیش‌نمایش زنده صفحه تسویه‌حساب مشتری">
+        <div class="card-header">
+          <h2>۲. صفحه تسویه‌حساب مشتری (پیش‌نمایش زنده ووکامرس)</h2>
+          <span id="ajax-status-badge">بروزرسانی خودکار فعال</span>
+        </div>
+        <div class="card-body">
+
+          <!-- Simulated Cart Products & Current Day -->
+          <div class="section-block">
+            <div class="form-grid-2" style="margin-bottom:12px;align-items:end;">
+              <div>
+                <div class="section-title" style="margin-bottom:4px;">سبد خرید آزمایشی مشتری</div>
+                <div style="font-size:12px;color:var(--text-light);">محصولات زیر را به سبد اضافه یا حذف کنید:</div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="sim-current-day">شبیه‌سازی روز فعلی هفته:</label>
+                <select id="sim-current-day" class="select" onchange="syncFromUI()">
+                  <option value="saturday">شنبه</option>
+                  <option value="sunday">یکشنبه</option>
+                  <option value="monday">دوشنبه</option>
+                  <option value="tuesday">سه‌شنبه</option>
+                  <option value="wednesday">چهارشنبه</option>
+                  <option value="thursday">پنج‌شنبه</option>
+                  <option value="friday">جمعه</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="product-list" id="sim-products-list"></div>
+          </div>
+
+          <!-- Coupon Input Box -->
+          <div class="coupon-bar">
+            <div style="font-size:12.5px;">
+              کد تخفیف آزمایشی: <strong>BAHAR15</strong> (۱۵٪ تخفیف روی سبد)
+            </div>
+            <div class="coupon-form">
+              <input type="text" id="coupon-code-input" class="input" style="width:130px;padding:6px 10px;" value="BAHAR15" />
+              <button type="button" class="btn btn-dark" onclick="applyCoupon()">اعمال کد تخفیف</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Notices Container -->
+          <div id="checkout-notices-area"></div>
+
+          <!-- Order Summary Table -->
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>شرح صورتحساب</th>
+                <th class="price-col">مبلغ</th>
+              </tr>
+            </thead>
+            <tbody id="order-review-tbody"></tbody>
+          </table>
+
+          <!-- Payment Methods Selection -->
+          <div class="section-title">انتخاب روش پرداخت در تسویه‌حساب</div>
+          <div id="payment-gateways-area"></div>
+
+          <button type="button" class="btn btn-primary submit-btn" onclick="submitCheckoutOrder()">
+            ثبت سفارش و بررسی نهایی قوانین
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const CATEGORIES = [
+      { id: 101, name: 'کالای دیجیتال' },
+      { id: 103, name: 'لوازم خانگی' },
+      { id: 104, name: 'مد و پوشاک' },
+      { id: 105, name: 'طلا و جواهرات' }
+    ];
+
+    const WEEKDAYS = [
+      { key: 'saturday', label: 'شنبه' },
+      { key: 'sunday', label: 'یکشنبه' },
+      { key: 'monday', label: 'دوشنبه' },
+      { key: 'tuesday', label: 'سه‌شنبه' },
+      { key: 'wednesday', label: 'چهارشنبه' },
+      { key: 'thursday', label: 'پنج‌شنبه' },
+      { key: 'friday', label: 'جمعه' }
+    ];
+
+    const PRODUCTS = [
+      {
+        id: 1,
+        name: 'اسپرسوساز دلونگی Dedica EC685',
+        price: 12400000,
+        onSale: false,
+        catId: 103,
+        catName: 'لوازم خانگی'
+      },
+      {
+        id: 2,
+        name: 'هدفون بی‌سیم سونی WH-1000XM5 (فروش ویژه حراج)',
+        price: 15800000,
+        onSale: true,
+        catId: 101,
+        catName: 'کالای دیجیتال'
+      },
+      {
+        id: 3,
+        name: 'نیم‌ست طلا ۱۸ عیار طرح ورساچه',
+        price: 28000000,
+        onSale: false,
+        catId: 105,
+        catName: 'طلا و جواهرات'
+      }
+    ];
+
+    const state = {
+      selectedCategories: [105],
+      allowedDays: ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday'],
+      cartProductIds: [1],
+      appliedCoupon: null,
+      selectedGateway: 'WC_Gateway_SnappPay',
+      transientNotice: null
+    };
+
+    function formatToman(num) {
+      return Math.round(num).toLocaleString('fa-IR') + ' تومان';
+    }
+
+    function renderChips() {
+      const catContainer = document.getElementById('categories-chips');
+      catContainer.innerHTML = CATEGORIES.map(cat => {
+        const active = state.selectedCategories.includes(cat.id);
+        return `<label class="chip-check ${active ? 'active' : ''}">
+          <input type="checkbox" ${active ? 'checked' : ''} onchange="toggleCategory(${cat.id})" />
+          <span>${cat.name}</span>
+        </label>`;
+      }).join('');
+
+      const dayContainer = document.getElementById('weekdays-chips');
+      dayContainer.innerHTML = WEEKDAYS.map(day => {
+        const active = state.allowedDays.includes(day.key);
+        return `<label class="chip-check ${active ? 'active' : ''}">
+          <input type="checkbox" ${active ? 'checked' : ''} onchange="toggleDay('${day.key}')" />
+          <span>${day.label}</span>
+        </label>`;
+      }).join('');
+    }
+
+    function toggleCategory(catId) {
+      if (state.selectedCategories.includes(catId)) {
+        state.selectedCategories = state.selectedCategories.filter(id => id !== catId);
+      } else {
+        state.selectedCategories.push(catId);
+      }
+      state.transientNotice = null;
+      renderAll();
+    }
+
+    function toggleDay(dayKey) {
+      if (state.allowedDays.includes(dayKey)) {
+        state.allowedDays = state.allowedDays.filter(k => k !== dayKey);
+      } else {
+        state.allowedDays.push(dayKey);
+      }
+      state.transientNotice = null;
+      renderAll();
+    }
+
+    function toggleCartProduct(prodId) {
+      if (state.cartProductIds.includes(prodId)) {
+        state.cartProductIds = state.cartProductIds.filter(id => id !== prodId);
+      } else {
+        state.cartProductIds.push(prodId);
+      }
+      state.transientNotice = null;
+      renderAll();
+    }
+
+    function getRulesFromDOM() {
+      return {
+        disableCoupons: document.getElementById('rule-disable-coupons').checked,
+        feeEnabled: document.getElementById('rule-fee-enabled').checked,
+        feeTitle: document.getElementById('rule-fee-title').value || 'کارمزد خرید اقساطی اسنپ‌پی',
+        feePercent: parseFloat(document.getElementById('rule-fee-percent').value) || 0,
+        disableOnSale: document.getElementById('rule-disable-onsale').checked,
+        catMode: document.getElementById('rule-cat-mode').value,
+        minAmount: parseFloat(document.getElementById('rule-min-amount').value) || 0,
+        maxAmount: parseFloat(document.getElementById('rule-max-amount').value) || 0,
+        currentDay: document.getElementById('sim-current-day').value
+      };
+    }
+
+    function evaluateRestrictions(rules, cartItems) {
+      const reasons = [];
+
+      if (cartItems.length === 0) {
+        reasons.push('سبد خرید خالی است.');
+        return { available: false, reasons };
+      }
+
+      const dayObj = WEEKDAYS.find(d => d.key === rules.currentDay);
+      if (!state.allowedDays.includes(rules.currentDay)) {
+        reasons.push(`امکان ثبت سفارش با درگاه اقساطی اسنپ‌پی در روز «${dayObj ? dayObj.label : rules.currentDay}» فعال نیست.`);
+      }
+
+      const subtotal = cartItems.reduce((s, p) => s + p.price, 0) + 85000;
+      if (rules.minAmount > 0 && subtotal < rules.minAmount) {
+        reasons.push(`حداقل مبلغ مجاز فاکتور برای پرداخت با اسنپ‌پی ${formatToman(rules.minAmount)} است.`);
+      }
+      if (rules.maxAmount > 0 && subtotal > rules.maxAmount) {
+        reasons.push(`حداکثر مبلغ مجاز فاکتور برای پرداخت با اسنپ‌پی ${formatToman(rules.maxAmount)} است.`);
+      }
+
+      if (rules.disableOnSale && cartItems.some(p => p.onSale)) {
+        reasons.push('پرداخت با اسنپ‌پی برای سبدهای خرید حاوی محصولات فروش ویژه (حراج) غیرفعال است.');
+      }
+
+      if (rules.catMode !== 'none' && state.selectedCategories.length > 0) {
+        for (const item of cartItems) {
+          const inList = state.selectedCategories.includes(item.catId);
+          if (rules.catMode === 'disallowed' && inList) {
+            reasons.push(`محصول «${item.name}» در دسته‌بندی غیرمجاز (${item.catName}) قرار دارد.`);
+            break;
+          }
+          if (rules.catMode === 'allowed_only' && !inList) {
+            reasons.push(`محصول «${item.name}» جزو دسته‌بندی‌های مجاز اسنپ‌پی نیست.`);
+            break;
+          }
+        }
+      }
+
+      return {
+        available: reasons.length === 0,
+        reasons
+      };
+    }
+
+    function selectGateway(gatewayId) {
+      const rules = getRulesFromDOM();
+      state.selectedGateway = gatewayId;
+
+      if (gatewayId === 'WC_Gateway_SnappPay' && rules.disableCoupons && state.appliedCoupon) {
+        state.appliedCoupon = null;
+        state.transientNotice = {
+          type: 'warning',
+          text: 'کد تخفیف در صورت انتخاب روش پرداخت اقساطی اسنپ‌پی قابل استفاده نیست و به صورت خودکار از سبد خرید حذف شد.'
+        };
+      } else {
+        state.transientNotice = null;
+      }
+
+      renderAll();
+    }
+
+    function applyCoupon() {
+      const code = (document.getElementById('coupon-code-input').value || '').trim().toUpperCase();
+      if (!code) return;
+
+      const rules = getRulesFromDOM();
+      if (state.selectedGateway === 'WC_Gateway_SnappPay' && rules.disableCoupons) {
+        state.transientNotice = {
+          type: 'error',
+          text: 'امکان اعمال کد تخفیف هنگام استفاده از درگاه پرداخت اقساطی اسنپ‌پی وجود ندارد. (برای تست حذف خودکار، ابتدا درگاه زرین‌پال را انتخاب کنید، کوپن را بزنید و سپس روی اسنپ‌پی کلیک کنید).'
+        };
+        renderAll();
+        return;
+      }
+
+      state.appliedCoupon = { code, percent: 15 };
+      state.transientNotice = {
+        type: 'success',
+        text: `کد تخفیف ۱۵ درصدی (${code}) با موفقیت روی فاکتور اعمال شد.`
+      };
+      renderAll();
+    }
+
+    function submitCheckoutOrder() {
+      const rules = getRulesFromDOM();
+      const cartItems = PRODUCTS.filter(p => state.cartProductIds.includes(p.id));
+      const evalRes = evaluateRestrictions(rules, cartItems);
+
+      if (state.selectedGateway === 'WC_Gateway_SnappPay' && !evalRes.available) {
+        state.transientNotice = {
+          type: 'error',
+          text: 'خطای اعتبارسنجی سمت سرور (woocommerce_checkout_process): ' + evalRes.reasons.join(' | ')
+        };
+      } else {
+        state.transientNotice = {
+          type: 'success',
+          text: state.selectedGateway === 'WC_Gateway_SnappPay'
+            ? 'سفارش با موفقیت تایید شد و خریدار به صفحه پرداخت ۴ قسطه اسنپ‌پی منتقل می‌گردد.'
+            : 'سفارش با درگاه بانکی زرین‌پال با موفقیت ثبت شد.'
+        };
+      }
+      renderAll();
+    }
+
+    function applyScenario(type) {
+      document.getElementById('rule-disable-coupons').checked = true;
+      document.getElementById('rule-fee-enabled').checked = true;
+      document.getElementById('rule-fee-percent').value = '4.5';
+      document.getElementById('rule-disable-onsale').checked = true;
+      document.getElementById('rule-cat-mode').value = 'disallowed';
+      state.selectedCategories = [105];
+      state.allowedDays = ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday'];
+      document.getElementById('sim-current-day').value = 'saturday';
+
+      if (type === 'normal') {
+        state.cartProductIds = [1];
+        state.appliedCoupon = null;
+        state.selectedGateway = 'WC_Gateway_SnappPay';
+        state.transientNotice = {
+          type: 'success',
+          text: 'سناریو ۱ فعال شد: محصول مجاز در سبد است، درگاه اسنپ‌پی فعال است و ۴.۵٪ کارمزد اقساطی به فاکتور اضافه شد.'
+        };
+      } else if (type === 'coupon') {
+        state.cartProductIds = [1];
+        state.selectedGateway = 'WC_Gateway_Zarinpal';
+        state.appliedCoupon = { code: 'BAHAR15', percent: 15 };
+        state.transientNotice = {
+          type: 'warning',
+          text: 'سناریو ۲: اکنون درگاه زرین‌پال با کد تخفیف ۱۵٪ فعال است. حالا روی گزینه «پرداخت اقساطی اسنپ‌پی» در پایین کلیک کنید تا حذف خودکار کوپن و افزودن کارمزد را ببینید!'
+        };
+      } else if (type === 'onsale') {
+        state.cartProductIds = [1, 2];
+        state.appliedCoupon = null;
+        state.selectedGateway = 'WC_Gateway_Zarinpal';
+        state.transientNotice = {
+          type: 'error',
+          text: 'سناریو ۳ فعال شد: هدفون حراج به سبد خرید اضافه شد؛ درگاه اسنپ‌پی به صورت خودکار مخفی گردید.'
+        };
+      } else if (type === 'category') {
+        state.cartProductIds = [3];
+        state.appliedCoupon = null;
+        state.selectedGateway = 'WC_Gateway_Zarinpal';
+        state.transientNotice = {
+          type: 'error',
+          text: 'سناریو ۴ فعال شد: محصول دسته «طلا و جواهرات» در سبد قرار گرفت و درگاه اسنپ‌پی غیرفعال شد.'
+        };
+      } else if (type === 'friday') {
+        state.cartProductIds = [1];
+        document.getElementById('sim-current-day').value = 'friday';
+        state.selectedGateway = 'WC_Gateway_Zarinpal';
+        state.transientNotice = {
+          type: 'error',
+          text: 'سناریو ۵ فعال شد: روز هفته روی «جمعه» قرار گرفت که جزو روزهای مجاز خرید اقساطی نیست.'
+        };
+      }
+      renderAll();
+    }
+
+    function syncFromUI() {
+      const rules = getRulesFromDOM();
+      if (state.selectedGateway === 'WC_Gateway_SnappPay' && rules.disableCoupons && state.appliedCoupon) {
+        state.appliedCoupon = null;
+        state.transientNotice = {
+          type: 'warning',
+          text: 'به دلیل فعال بودن قانون منع کد تخفیف روی اسنپ‌پی، کوپن از سبد حذف شد.'
+        };
+      }
+      renderAll();
+    }
+
+    function renderAll() {
+      renderChips();
+      const rules = getRulesFromDOM();
+      const cartItems = PRODUCTS.filter(p => state.cartProductIds.includes(p.id));
+      const evalRes = evaluateRestrictions(rules, cartItems);
+
+      // Render Products List
+      const prodContainer = document.getElementById('sim-products-list');
+      prodContainer.innerHTML = PRODUCTS.map(p => {
+        const inCart = state.cartProductIds.includes(p.id);
+        return `<div class="product-item ${inCart ? 'in-cart' : ''}">
+          <div>
+            <div class="product-name">${p.name}</div>
+            <div class="product-meta">
+              دسته: ${p.catName} · <strong>${formatToman(p.price)}</strong>
+              ${p.onSale ? ' · <span class="meta-highlight-sale">حراج (فروش ویژه)</span>' : ''}
+              ${state.selectedCategories.includes(p.catId) && rules.catMode === 'disallowed' ? ' · <span class="meta-highlight-cat">دسته غیرمجاز</span>' : ''}
+            </div>
+          </div>
+          <button type="button" class="btn ${inCart ? '' : 'btn-dark'}" onclick="toggleCartProduct(${p.id})">
+            ${inCart ? 'حذف از سبد' : '+ افزودن به سبد'}
+          </button>
+        </div>`;
+      }).join('');
+
+      // Calculate Totals
+      const subtotal = cartItems.reduce((s, p) => s + p.price, 0);
+      const shipping = subtotal > 0 ? 85000 : 0;
+      const discount = (subtotal > 0 && state.appliedCoupon)
+        ? Math.round((subtotal * state.appliedCoupon.percent) / 100)
+        : 0;
+      const discountedSubtotal = Math.max(0, subtotal - discount);
+      const isSnappSelected = state.selectedGateway === 'WC_Gateway_SnappPay' && evalRes.available;
+      const feeAmount = (subtotal > 0 && isSnappSelected && rules.feeEnabled && rules.feePercent > 0)
+        ? Math.round(((discountedSubtotal + shipping) * rules.feePercent) / 100)
+        : 0;
+      const finalTotal = subtotal > 0 ? (discountedSubtotal + shipping + feeAmount) : 0;
+      const perInstallment = Math.round(finalTotal / 4);
+
+      // Render Notices
+      const noticesArea = document.getElementById('checkout-notices-area');
+      let noticesHtml = '';
+      if (state.transientNotice) {
+        const cls = state.transientNotice.type === 'error'
+          ? 'notice-error'
+          : state.transientNotice.type === 'warning'
+          ? 'notice-warning'
+          : 'notice-success';
+        noticesHtml += `<div class="notice-box ${cls}">${state.transientNotice.text}</div>`;
+      }
+      noticesArea.innerHTML = noticesHtml;
+
+      // Render Order Table
+      const tbody = document.getElementById('order-review-tbody');
+      if (cartItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:var(--text-light);padding:20px;">سبد خرید خالی است.</td></tr>`;
+      } else {
+        let rows = cartItems.map(item => `
+          <tr>
+            <td>${item.name} × ۱</td>
+            <td class="price-col">${formatToman(item.price)}</td>
+          </tr>
+        `).join('');
+
+        rows += `
+          <tr>
+            <td>جمع جزء سبد خرید</td>
+            <td class="price-col">${formatToman(subtotal)}</td>
+          </tr>
+        `;
+
+        if (discount > 0 && state.appliedCoupon) {
+          rows += `
+            <tr class="row-discount">
+              <td>کد تخفیف (${state.appliedCoupon.code} - ۱۵٪)</td>
+              <td class="price-col">- ${formatToman(discount)}</td>
+            </tr>
+          `;
+        }
+
+        rows += `
+          <tr>
+            <td>هزینه ارسال</td>
+            <td class="price-col">${formatToman(shipping)}</td>
+          </tr>
+        `;
+
+        if (feeAmount > 0) {
+          rows += `
+            <tr class="row-fee">
+              <td>${rules.feeTitle} (${rules.feePercent}%)</td>
+              <td class="price-col">+ ${formatToman(feeAmount)}</td>
+            </tr>
+          `;
+        }
+
+        rows += `
+          <tr class="row-total">
+            <td>مبلغ قابل پرداخت نهایی</td>
+            <td class="price-col">${formatToman(finalTotal)}</td>
+          </tr>
+        `;
+        tbody.innerHTML = rows;
+      }
+
+      // Render Payment Gateways
+      const gatewaysArea = document.getElementById('payment-gateways-area');
+      let gwHtml = '';
+
+      if (evalRes.available) {
+        const snappChecked = state.selectedGateway === 'WC_Gateway_SnappPay';
+        gwHtml += `
+          <div class="gateway-box ${snappChecked ? 'selected' : ''}" onclick="selectGateway('WC_Gateway_SnappPay')">
+            <div class="gateway-header">
+              <div class="gateway-title">
+                <input type="radio" name="gw" ${snappChecked ? 'checked' : ''} />
+                <span>پرداخت اقساطی اسنپ‌پی (۴ قسطه)</span>
+              </div>
+              <span style="font-size:11.5px;color:var(--primary);font-weight:700;">درگاه فعال</span>
+            </div>
+            ${snappChecked ? `
+              <div class="gateway-details">
+                <span>مبلغ هر قسط ماهانه: <strong>${formatToman(perInstallment)}</strong></span>
+                <span>۴ قسط مساوی بدون چک</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      } else {
+        gwHtml += `
+          <div class="gateway-disabled-banner">
+            <strong style="color:var(--danger);">درگاه اسنپ‌پی به صورت خودکار مخفی شد (غیرقابل انتخاب توسط مشتری):</strong>
+            <ul style="margin-top:6px;padding-right:18px;">
+              ${evalRes.reasons.map(r => `<li>${r}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      const zarinChecked = state.selectedGateway === 'WC_Gateway_Zarinpal' || !evalRes.available;
+      gwHtml += `
+        <div class="gateway-box ${zarinChecked ? 'selected' : ''}" onclick="selectGateway('WC_Gateway_Zarinpal')">
+          <div class="gateway-header">
+            <div class="gateway-title">
+              <input type="radio" name="gw" ${zarinChecked ? 'checked' : ''} />
+              <span>پرداخت اینترنتی با کلیه کارت‌های بانکی (زرین‌پال)</span>
+            </div>
+            <span style="font-size:11.5px;color:var(--text-light);">پرداخت نقدی</span>
+          </div>
+        </div>
+      `;
+
+      gatewaysArea.innerHTML = gwHtml;
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
