@@ -1,0 +1,987 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>پی‌تون اسنپ پی</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap">
+<style>
+/* Layout concept: the WordPress admin look (dark admin bar, grey canvas, white postboxes, form-table settings, WooCommerce purple on the storefront side) applied to a plugin landing page with a live checkout simulator. System-style type: Vazirmatn for Persian, Consolas/Monaco for keys and hooks. */
+:root{
+  --bg:#F0F0F1; --surface:#FFFFFF; --surface-2:#F6F7F7; --ink:#1D2327; --ink-2:#50575E;
+  --line:#C3C4C7; --line-soft:#DCDCDE; --field:#8C8F94;
+  --accent:#2271B1; --accent-hover:#135E96; --accent-ink:#FFFFFF; --accent-soft:#F0F6FC;
+  --woo:#7F54B3; --woo-ink:#FFFFFF;
+  --ok:#007017; --ok-soft:#EDFAEF; --bad:#B32D2E; --bad-soft:#FCF0F1; --warn:#755100; --warn-soft:#FCF9E8;
+  --adminbar:#1D2327; --adminbar-ink:#F0F0F1; --adminbar-mute:#C3C4C7; --adminbar-hover-bg:#2C3338; --adminbar-hover:#72AEE6;
+  --font-body:'Vazirmatn',-apple-system,'Segoe UI',Tahoma,sans-serif;
+  --font-mono:Consolas,Monaco,'Courier New',monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101517; --surface:#1D2327; --surface-2:#161B1F; --ink:#F0F0F1; --ink-2:#A7AAAD;
+    --line:#3C434A; --line-soft:#2C3338; --field:#646970;
+    --accent:#72AEE6; --accent-hover:#9EC2E6; --accent-ink:#101517; --accent-soft:#17283A;
+    --woo:#B99BE0; --woo-ink:#101517;
+    --ok:#68DE7C; --ok-soft:#12281A; --bad:#F86368; --bad-soft:#3A1C1D; --warn:#F0C33C; --warn-soft:#302A10;
+    --adminbar:#0B0F11;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101517; --surface:#1D2327; --surface-2:#161B1F; --ink:#F0F0F1; --ink-2:#A7AAAD;
+  --line:#3C434A; --line-soft:#2C3338; --field:#646970;
+  --accent:#72AEE6; --accent-hover:#9EC2E6; --accent-ink:#101517; --accent-soft:#17283A;
+  --woo:#B99BE0; --woo-ink:#101517;
+  --ok:#68DE7C; --ok-soft:#12281A; --bad:#F86368; --bad-soft:#3A1C1D; --warn:#F0C33C; --warn-soft:#302A10;
+  --adminbar:#0B0F11;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.75}
+a{color:var(--accent)}
+a:hover{color:var(--accent-hover)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+
+.wrap{width:100%;max-width:1180px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono,code{font-family:var(--font-mono);direction:ltr;unicode-bidi:isolate}
+.num{font-variant-numeric:tabular-nums}
+
+/* admin bar */
+.adminbar{background:var(--adminbar);color:var(--adminbar-ink)}
+.adminbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;text-decoration:none;color:var(--adminbar-ink)}
+.brand:hover{color:var(--adminbar-hover)}
+.brand svg{flex:none}
+.nav-links{display:flex;gap:2px;flex-wrap:wrap}
+.nav-links a{padding:8px 12px;text-decoration:none;color:var(--adminbar-mute);font-size:.88rem;line-height:1.6}
+.nav-links a:hover{color:var(--adminbar-hover);background:var(--adminbar-hover-bg)}
+@media (max-width:640px){.nav-links a:not(.keep){display:none}}
+
+/* buttons */
+.button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 16px;border:1px solid var(--accent);border-radius:3px;background:var(--surface-2);color:var(--accent);font-weight:600;font-size:.92rem;line-height:1.5;text-decoration:none;cursor:pointer}
+.button:hover{background:var(--accent-soft);border-color:var(--accent-hover);color:var(--accent-hover)}
+.button-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.button-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover);color:var(--accent-ink)}
+.button.sm{min-height:30px;padding:0 12px;font-size:.84rem}
+
+/* postbox */
+.postbox{background:var(--surface);border:1px solid var(--line);box-shadow:0 1px 1px rgba(0,0,0,.04);min-width:0}
+.postbox>h3{margin:0;padding:9px 14px;font-size:.95rem;font-weight:600;line-height:1.5;border-bottom:1px solid var(--line)}
+.inside{padding:14px}
+.inside>*:first-child{margin-top:0}
+.inside>*:last-child{margin-bottom:0}
+
+/* hero */
+.hero{padding-block:28px 12px}
+.welcome{padding:32px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center}
+@media (max-width:860px){.welcome{grid-template-columns:1fr;padding:22px 18px;gap:28px}}
+.eyebrow{display:inline-block;font-size:.84rem;color:var(--ink-2);margin-bottom:6px}
+h1{font-size:clamp(1.8rem,4.2vw,2.7rem);font-weight:700;line-height:1.4;margin:0 0 14px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:1.04rem;color:var(--ink-2);max-width:58ch;margin:0 0 22px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.facts li{font-size:.8rem;padding:0 10px;border:1px solid var(--line);border-radius:3px;color:var(--ink-2);background:var(--surface-2);line-height:1.9}
+
+/* review mock in hero */
+.mock .inside{padding:12px 14px}
+.slip-pay{display:flex;align-items:center;gap:10px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:3px;padding:8px 12px;font-weight:600;margin-bottom:10px;font-size:.92rem}
+.dot-radio{width:14px;height:14px;border-radius:50%;border:4px solid var(--accent);background:var(--surface);flex:none}
+.slip-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--line-soft);font-size:.92rem}
+.slip-row b,.slip-row s{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:500}
+.slip-row.struck span{color:var(--ink-2)}
+.slip-row .tag{font-style:normal;font-size:.72rem;background:var(--bad-soft);color:var(--bad);padding:0 7px;border-radius:3px;margin-inline-start:6px;white-space:nowrap}
+.slip-row.fee{background:var(--accent-soft);margin-inline:-14px;padding-inline:14px}
+.slip-row.fee b{font-weight:700}
+.slip-total{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding-top:10px;border-top:1px solid var(--line);font-weight:700}
+.slip-total b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+
+/* sections */
+.sec{padding-block:36px}
+.sec-h{font-size:1.5rem;font-weight:600;line-height:1.5;margin:0 0 4px;text-wrap:balance}
+.sec-lead{color:var(--ink-2);max-width:66ch;margin:0 0 20px}
+
+.pbgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.pbgrid{grid-template-columns:1fr}}
+.key{display:inline-block;font-family:var(--font-mono);font-size:.76rem;color:var(--ink-2);direction:ltr;unicode-bidi:isolate;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:3px;padding:0 8px;margin-bottom:8px;max-width:100%;overflow-x:auto;white-space:nowrap}
+.pbgrid p{margin:0;color:var(--ink-2)}
+
+.benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.benefit{min-width:0}
+.benefit h4{font-size:.98rem;margin:0 0 4px;line-height:1.55}
+.benefit p{margin:0;color:var(--ink-2);font-size:.92rem}
+@media (max-width:980px){.benefits{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.benefits{grid-template-columns:1fr}}
+
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+.steps p{margin:0;color:var(--ink-2)}
+
+.faq details{border-top:1px solid var(--line-soft);padding:10px 0}
+.faq details:first-child{border-top:0;padding-top:0}
+.faq details:last-child{padding-bottom:0}
+.faq summary{display:flex;justify-content:space-between;gap:16px;cursor:pointer;font-weight:600;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--font-mono);color:var(--ink-2)}
+.faq details[open] summary::after{content:"−"}
+.faq details p{margin:8px 0 0;color:var(--ink-2)}
+.hooks{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.hooks li{color:var(--ink-2);font-size:.9rem}
+.hooks code{display:block;font-size:.82rem;color:var(--ink);text-align:left;overflow-x:auto;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:3px;padding:2px 8px}
+
+footer{padding-block:20px 36px;color:var(--ink-2);font-size:.88rem}
+
+/* ===== simulator ===== */
+.statusbar{display:flex;flex-wrap:wrap;gap:10px 32px;align-items:center;margin-bottom:16px}
+.statusbar.inside{padding:12px 16px}
+.st-item{min-width:0}
+.st-item small{display:block;color:var(--ink-2);font-size:.76rem;line-height:1.4}
+.st-item b{font-size:.96rem;font-variant-numeric:tabular-nums;font-weight:600}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-inline-end:6px;background:var(--ok)}
+.dot.off{background:var(--bad)}
+
+.scen-box{margin-bottom:16px}
+.scen-box h3{font-size:.88rem;margin:0 0 8px;color:var(--ink-2);font-weight:500}
+.scen{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--field);background:var(--surface);color:var(--ink);padding:1px 12px;border-radius:3px;font-size:.88rem;cursor:pointer;line-height:1.8}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);font-weight:600}
+.chip[aria-pressed="true"]::before{content:"✓ "}
+.hint{margin:8px 0 0;color:var(--ink-2);font-size:.9rem;min-height:1.75em}
+
+.tabs{display:none;gap:0;margin-bottom:12px}
+.tabs button{flex:1;padding:8px 10px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;font-weight:600}
+.tabs button:first-child{border-radius:0 3px 3px 0}
+.tabs button:last-child{border-radius:3px 0 0 3px;border-inline-end:1px solid var(--line)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.sim{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px;align-items:start}
+@media (max-width:899px){
+  .sim{grid-template-columns:1fr}
+  .tabs{display:flex}
+  .sim[data-view="shop"] .panel-admin{display:none}
+  .sim[data-view="admin"] .panel-shop{display:none}
+}
+
+/* admin side: WooCommerce settings screen */
+.panel-admin .inside{padding:16px 18px}
+.crumb{display:block;font-size:.74rem;color:var(--ink-2);margin-bottom:10px;overflow-x:auto;white-space:nowrap}
+.nav-tab{display:inline-block;padding:6px 14px;border:1px solid var(--line);border-bottom:1px solid var(--surface);background:var(--surface);font-weight:600;font-size:.92rem;margin-bottom:-1px;border-radius:3px 3px 0 0}
+.tab-line{border-bottom:1px solid var(--line);margin-bottom:6px}
+.sh{font-size:1.1rem;font-weight:600;margin:22px 0 2px;line-height:1.5}
+.sh:first-of-type{margin-top:12px}
+.sd{margin:0 0 4px;color:var(--ink-2);font-size:.88rem}
+.form-table{width:100%;border-collapse:collapse}
+.form-table tr{border-top:1px solid var(--line-soft)}
+.form-table th{width:190px;text-align:right;vertical-align:top;padding:14px 0 14px 12px;font-weight:600;font-size:.9rem}
+.form-table td{padding:10px 0;vertical-align:top;min-width:0}
+.description{color:var(--ink-2);font-size:.84rem;margin:4px 0 0;line-height:1.6}
+@media (max-width:620px){
+  .form-table th,.form-table td{display:block;width:auto}
+  .form-table th{padding:12px 0 0}
+  .form-table td{padding:4px 0 12px}
+}
+.chk{display:inline-flex;gap:8px;align-items:flex-start;cursor:pointer}
+.chk input{margin-top:6px;width:16px;height:16px;accent-color:var(--accent);flex:none}
+.inp{width:100%;max-width:340px;min-width:0;min-height:34px;padding:2px 10px;border:1px solid var(--field);border-radius:4px;background:var(--surface);color:var(--ink);box-shadow:0 0 0 transparent}
+.inp:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.inp.short{max-width:130px}
+textarea.inp{max-width:100%;resize:vertical;min-height:62px;line-height:1.6;padding:6px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips.dim{opacity:.55}
+.chip .today{font-size:.7rem;color:var(--ink-2);margin-inline-start:4px}
+details.more{margin-top:18px;border:1px solid var(--line);border-radius:3px;background:var(--surface-2)}
+details.more>summary{cursor:pointer;font-weight:600;padding:8px 14px}
+details.more .form-table{background:var(--surface);padding-inline:14px}
+.sandbox{margin-top:18px;border:1px solid var(--line);border-inline-start:4px solid var(--accent);background:var(--surface-2);padding:12px 14px;display:grid;gap:10px;border-radius:0 3px 3px 0}
+.sandbox h4{margin:0;font-size:.9rem}
+.sandbox .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* shop side: WooCommerce checkout */
+.panel-shop .inside{padding:16px 18px}
+.notices{margin-bottom:6px}
+.notices:empty{display:none}
+.n{margin:0 0 10px;padding:11px 14px;background:var(--surface-2);border-top:3px solid var(--accent);font-size:.92rem;line-height:1.65}
+.n.error{border-top-color:var(--bad);background:var(--bad-soft)}
+.n.success{border-top-color:var(--ok);background:var(--ok-soft)}
+.shop h4{margin:18px 0 8px;padding-bottom:6px;font-size:.98rem;border-bottom:1px solid var(--line-soft)}
+.shop h4:first-of-type{margin-top:6px}
+.cart-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.cr-name{font-weight:600;min-width:0}
+.cr-meta{display:flex;flex-wrap:wrap;gap:4px;min-width:0;align-items:center}
+.cr-buy{display:flex;align-items:center;gap:12px;justify-content:flex-end}
+.price{font-variant-numeric:tabular-nums;font-size:.94rem;white-space:nowrap}
+.price s{color:var(--ink-2);margin-inline-end:6px;font-size:.82rem}
+.tagc{display:inline-block;font-size:.72rem;line-height:1.7;padding:0 7px;border-radius:3px;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line-soft)}
+.tagc.sale{background:var(--warn-soft);color:var(--warn);border-color:transparent;font-weight:700}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--field);border-radius:3px;overflow:hidden}
+.qty button{width:28px;height:28px;border:0;background:var(--surface-2);cursor:pointer;line-height:1}
+.qty button:hover{background:var(--accent-soft)}
+.qty output{min-width:28px;text-align:center;font-variant-numeric:tabular-nums;font-size:.9rem}
+.icon-btn{width:28px;height:28px;border-radius:3px;border:1px solid var(--line);background:var(--surface);cursor:pointer;line-height:1;color:var(--ink-2)}
+.icon-btn:hover{color:var(--bad);border-color:var(--bad)}
+.empty{color:var(--ink-2);margin:6px 0;font-size:.92rem}
+.shelf-label{margin:10px 0 6px;font-size:.82rem;color:var(--ink-2)}
+.shelf{display:flex;flex-wrap:wrap;gap:6px}
+.shelf .chip i{font-style:normal;font-size:.7rem;color:var(--warn);font-weight:700}
+
+.cform{display:flex;gap:8px}
+.cform .inp{direction:ltr;text-align:left;max-width:none;flex:1}
+.applied{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.applied:empty{display:none}
+.applied .tagc{display:inline-flex;align-items:center;gap:6px;background:var(--ok-soft);color:var(--ok);border-color:transparent;font-weight:700}
+.applied button{border:0;background:none;cursor:pointer;color:inherit;padding:0;line-height:1}
+.cnote{color:var(--ink-2);font-size:.78rem;margin:6px 0 0}
+
+.pays{display:grid;gap:0;border:1px solid var(--line)}
+.pay{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-top:1px solid var(--line-soft);cursor:pointer;min-width:0;background:var(--surface)}
+.pay:first-child{border-top:0}
+.pay input{margin-top:7px;accent-color:var(--woo);flex:none}
+.pay.sel{background:var(--surface-2)}
+.pay b{display:block;font-size:.94rem;line-height:1.6;font-weight:600}
+.pay small{display:block;color:var(--ink-2);font-size:.8rem;line-height:1.5}
+.pay .badge{display:inline-block;font-size:.72rem;background:var(--woo);color:var(--woo-ink);border-radius:3px;padding:0 7px;margin-inline-start:6px;font-weight:700}
+.pay.gone{cursor:default;flex-direction:column;gap:6px;background:var(--bad-soft)}
+.pay.gone b{text-decoration:line-through;color:var(--ink-2)}
+.pay.gone .why{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.pay.gone .why li{font-size:.86rem;color:var(--bad);line-height:1.6}
+.pay.gone .stale{align-self:flex-start}
+
+.sum{width:100%;border-collapse:collapse;font-size:.94rem}
+.sum td{padding:8px 0;border-top:1px solid var(--line-soft);vertical-align:top}
+.sum td:last-child{text-align:left;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sum tr.disc td:last-child{color:var(--ok)}
+.sum tr.fee td{background:var(--accent-soft);font-weight:700}
+.sum tr.fee td:first-child{padding-inline-start:8px}
+.sum tr.fee td:last-child{padding-inline-end:8px}
+.sum tr.total td{font-weight:700;font-size:1.08rem;border-top:2px solid var(--line)}
+.place{margin-top:14px;width:100%;min-height:44px;border:0;border-radius:3px;background:var(--woo);color:var(--woo-ink);font-weight:700;font-size:1rem;cursor:pointer}
+.place:hover{filter:brightness(1.08)}
+
+.payload{margin-top:14px;border:1px solid var(--line);border-radius:3px;background:var(--surface-2);padding:8px 12px}
+.payload summary{cursor:pointer;font-weight:600;font-size:.9rem}
+.payload .scroll{overflow-x:auto;margin-top:10px}
+.pt{width:100%;border-collapse:collapse;font-size:.84rem;min-width:420px;background:var(--surface)}
+.pt th{text-align:right;color:var(--ink-2);font-weight:500;padding:5px 8px;border-bottom:1px solid var(--line)}
+.pt td{padding:5px 8px;border-bottom:1px solid var(--line-soft)}
+.pt td.r{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pt tr.fee td{background:var(--accent-soft);font-weight:700}
+.eq{font-size:.84rem;color:var(--ink-2);margin:10px 0 0;line-height:1.7}
+.eq b{color:var(--ink)}
+
+/* rules + log */
+.under{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:16px;margin-top:16px;align-items:start}
+@media (max-width:899px){.under{grid-template-columns:1fr}}
+.under .sub{margin:0 0 8px;color:var(--ink-2);font-size:.88rem}
+.rules{list-style:none;margin:0;padding:0}
+.rule{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 0;border-top:1px solid var(--line-soft)}
+.rgroup+.rule{border-top:0}
+.rule b{font-size:.94rem;font-weight:600}
+.rule p{grid-column:1/-1;margin:0;color:var(--ink-2);font-size:.86rem;line-height:1.6}
+.rule.bad p{color:var(--bad)}
+.pill{font-size:.74rem;font-weight:700;padding:0 8px;border-radius:3px;line-height:1.8;align-self:start;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.off{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line-soft)}
+.pill.on{background:var(--accent-soft);color:var(--ink)}
+.rgroup{list-style:none;font-size:.78rem;color:var(--ink-2);margin:14px 0 0;font-weight:600}
+.rgroup:first-child{margin-top:0}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.log li{border-top:1px solid var(--line-soft);padding-top:10px;min-width:0}
+.log li:first-child{border-top:0;padding-top:0}
+.log code{display:block;font-size:.74rem;color:var(--accent);text-align:left;overflow-x:auto;white-space:nowrap}
+.log span{font-size:.88rem;color:var(--ink-2);line-height:1.6}
+.log .none{color:var(--ink-2);font-size:.88rem}
+</style>
+
+<div dir="rtl" lang="fa">
+
+<header class="adminbar">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="پی‌تون اسنپ پی">
+      <svg width="24" height="24" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 15.5 14 9l6 6.5M14 9.5V20" fill="none" stroke="var(--adminbar-hover)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>پی‌تون اسنپ پی</span>
+    </a>
+    <nav class="nav-links" aria-label="بخش‌های صفحه">
+      <a href="#features">قابلیت‌ها</a>
+      <a href="#benefits">مزایا</a>
+      <a href="#demo" class="keep">دموی زنده</a>
+      <a href="#setup">نصب</a>
+      <a href="#faq">پرسش‌ها</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div class="postbox welcome">
+      <div>
+        <span class="eyebrow">افزونهٔ مکمل ووکامرس · نسخهٔ ۱٫۰٫۰</span>
+        <h1>پرداخت اقساطی اسنپ‌پی، <em>با قوانین خودِ شما</em></h1>
+        <p class="lead">«پی‌تون اسنپ پی» کنار افزونهٔ رسمی درگاه اسنپ‌پی کار می‌کند و مشخص می‌کند اسنپ‌پی چه وقت در تسویه‌حساب نمایش داده شود، چه کارمزدی بگیرد و با چه تخفیف‌هایی هم‌زمان نشود. همه‌چیز از یک تب در تنظیمات ووکامرس.</p>
+        <div class="cta">
+          <a class="button button-primary" href="#demo">قوانین را روی یک سبد امتحان کنید</a>
+          <a class="button" href="#features">فهرست قابلیت‌ها</a>
+        </div>
+        <ul class="facts">
+          <li>وردپرس ۵٫۸ به بالا</li>
+          <li>ووکامرس ۷٫۱ به بالا</li>
+          <li>PHP ۷٫۴ به بالا</li>
+          <li>سازگار با HPOS</li>
+          <li>نیازمند افزونهٔ اصلی اسنپ‌پی</li>
+        </ul>
+      </div>
+      <div class="postbox mock" aria-label="نمونهٔ فاکتور با کارمزد اسنپ‌پی">
+        <h3>سفارش شما</h3>
+        <div class="inside">
+          <div class="slip-pay"><span class="dot-radio"></span>پرداخت اقساطی اسنپ‌پی</div>
+          <div class="slip-row"><span>۲ قلم کالا</span><b>۱۸٬۸۸۰٬۰۰۰</b></div>
+          <div class="slip-row struck"><span>کد WELCOME10<em class="tag">با اسنپ‌پی حذف شد</em></span><s>−۱٬۸۸۸٬۰۰۰</s></div>
+          <div class="slip-row"><span>حمل و نقل</span><b>۱۲۰٬۰۰۰</b></div>
+          <div class="slip-row fee"><span>کارمزد خرید اقساطی (۳٪)</span><b>+۵۷۰٬۰۰۰</b></div>
+          <div class="slip-total"><span>مبلغ قابل پرداخت</span><b>۱۹٬۵۷۰٬۰۰۰ <small>تومان</small></b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="features">
+  <div class="wrap">
+    <h2 class="sec-h">شش قانون برای درگاه اقساطی</h2>
+    <p class="sec-lead">هر قانون یک گزینهٔ مستقل در تنظیمات است. بالای هر توضیح، کلید گزینه را می‌بینید که در دیتابیس ذخیره می‌شود.</p>
+    <div class="pbgrid">
+      <div class="postbox">
+        <h3>کد تخفیف و اقساط، هم‌زمان نه</h3>
+        <div class="inside">
+          <span class="key">snapppay_booster_disable_coupons</span>
+          <p>با انتخاب اسنپ‌پی، کدهای اعمال‌شده از سبد برداشته می‌شوند و ثبت کد جدید با پیام خطای دلخواه شما رد می‌شود.</p>
+        </div>
+      </div>
+      <div class="postbox">
+        <h3>کارمزد درصدی روی فاکتور</h3>
+        <div class="inside">
+          <span class="key">snapppay_booster_fee_percentage</span>
+          <p>درصد را شما تعیین می‌کنید و روی جمع کالاها پس از تخفیف به‌علاوهٔ حمل حساب می‌شود. عنوان ردیف در فاکتور هم قابل تنظیم است.</p>
+        </div>
+      </div>
+      <div class="postbox">
+        <h3>کالای حراج، بدون اقساط</h3>
+        <div class="inside">
+          <span class="key">snapppay_booster_disable_on_sale</span>
+          <p>اگر حتی یک محصول یا یک متغیر در فروش ویژه باشد، اسنپ‌پی از لیست درگاه‌های تسویه‌حساب حذف می‌شود.</p>
+        </div>
+      </div>
+      <div class="postbox">
+        <h3>دسته‌های مجاز یا ممنوع</h3>
+        <div class="inside">
+          <span class="key">snapppay_booster_category_restriction_mode</span>
+          <p>یا فقط سبدهایی که همهٔ اقلامشان از دسته‌های انتخابی است اقساط دارند، یا وجود یک کالا از دستهٔ ممنوع کافی است تا درگاه مخفی شود. زیردسته‌ها هم حساب می‌شوند.</p>
+        </div>
+      </div>
+      <div class="postbox">
+        <h3>کف و سقف مبلغ سبد</h3>
+        <div class="inside">
+          <span class="key">snapppay_booster_min_amount · max_amount</span>
+          <p>مبلغ مقایسه‌شده شامل کالا و حمل است و کارمزد خود اسنپ‌پی را حساب نمی‌کند، پس انتخاب درگاه نتیجه را عوض نمی‌کند.</p>
+        </div>
+      </div>
+      <div class="postbox">
+        <h3>روزهای مجاز هفته</h3>
+        <div class="inside">
+          <span class="key">snapppay_booster_allowed_days</span>
+          <p>هر روز را جدا روشن یا خاموش کنید. روز بر اساس منطقهٔ زمانی تنظیم‌شده در وردپرس تشخیص داده می‌شود.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="benefits">
+  <div class="wrap">
+    <div class="postbox">
+      <h3>چرا کنار افزونهٔ اصلی؟</h3>
+      <div class="inside">
+        <div class="benefits">
+          <div class="benefit">
+            <h4>هزینهٔ اقساط به فاکتور می‌رسد</h4>
+            <p>کارمزد به‌صورت یک ردیف جدا در فاکتور و سفارش ثبت می‌شود، نه داخل قیمت کالا.</p>
+          </div>
+          <div class="benefit">
+            <h4>تخفیف روی تخفیف نمی‌نشیند</h4>
+            <p>کد تخفیف و خرید اقساطی هم‌زمان فعال نمی‌شوند، مگر خودتان اجازه بدهید.</p>
+          </div>
+          <div class="benefit">
+            <h4>مبلغ با API اسنپ‌پی می‌خواند</h4>
+            <p>ردیف کارمزد به اقلام درخواست اسنپ‌پی هم اضافه می‌شود تا جمع اقلام با مبلغ کل بخواند.</p>
+          </div>
+          <div class="benefit">
+            <h4>خاموش کردنش بی‌خطر است</h4>
+            <p>با یک گزینه همهٔ قوانین کنار می‌روند و درگاه مثل قبل از نصب افزونه کار می‌کند.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="demo">
+  <div class="wrap">
+    <h2 class="sec-h">دموی زنده</h2>
+    <p class="sec-lead">سمت مدیر قوانین را تغییر دهید و سمت مشتری نتیجه را ببینید. منطق شبیه‌ساز همان شرط‌های کد افزونه است و چیزی به سرور ارسال نمی‌شود.</p>
+
+    <div class="scen-box">
+      <h3>با یک سناریوی آماده شروع کنید</h3>
+      <div class="scen" id="scen" role="group" aria-label="سناریوهای آماده"></div>
+      <p class="hint" id="hint" aria-live="polite"></p>
+    </div>
+
+    <div class="postbox"><div class="statusbar inside" id="statusbar" aria-live="polite" style="margin-bottom:0"></div></div>
+
+    <div class="tabs" role="tablist" aria-label="نمای دمو" style="margin-top:16px">
+      <button type="button" role="tab" id="tab-shop" data-view="shop" aria-selected="true">نمای مشتری</button>
+      <button type="button" role="tab" id="tab-admin" data-view="admin" aria-selected="false">پنل مدیر</button>
+    </div>
+
+    <div class="sim" id="sim" data-view="shop" style="margin-top:16px">
+
+      <!-- Admin settings -->
+      <section class="postbox panel-admin" aria-labelledby="admin-h">
+        <h3 id="admin-h">پنل مدیر · ووکامرس ‹ تنظیمات</h3>
+        <div class="inside">
+          <code class="crumb" dir="ltr">WooCommerce › Settings › snapppay_booster</code>
+          <div class="tab-line"><span class="nav-tab">قوانین پیشرفته اسنپ‌پی</span></div>
+
+          <h2 class="sh">تنظیمات عمومی و کد تخفیف</h2>
+          <p class="sd">مدیریت وضعیت کلی قوانین و نحوهٔ برخورد با کدهای تخفیف هنگام انتخاب درگاه اسنپ‌پی.</p>
+          <table class="form-table" role="presentation"><tbody>
+            <tr><th scope="row">فعال‌سازی قوانین پیشرفته</th><td>
+              <label class="chk"><input type="checkbox" id="enabled" data-bool="enabled"><span>فعال‌سازی اعمال محدودیت‌ها، کارمزد و قوانین سفارشی روی درگاه اسنپ‌پی</span></label></td></tr>
+            <tr><th scope="row">غیرفعال‌سازی کد تخفیف</th><td>
+              <label class="chk"><input type="checkbox" id="disable_coupons" data-bool="disable_coupons"><span>لغو و جلوگیری از اعمال کوپن تخفیف در صورت انتخاب درگاه اسنپ‌پی</span></label>
+              <p class="description">کوپن‌های اعمال‌شده حذف می‌شوند و اجازهٔ ثبت کوپن جدید داده نمی‌شود.</p></td></tr>
+          </tbody></table>
+
+          <h2 class="sh">کارمزد و درصد افزایشی فاکتور</h2>
+          <p class="sd">افزودن خودکار درصد کارمزد به جمع فاکتور در صورت انتخاب درگاه اقساطی اسنپ‌پی.</p>
+          <table class="form-table" role="presentation"><tbody>
+            <tr><th scope="row">فعال‌سازی کارمزد اسنپ‌پی</th><td>
+              <label class="chk"><input type="checkbox" id="fee_enabled" data-bool="fee_enabled"><span>افزودن درصد کارمزد به فاکتور هنگام انتخاب درگاه اسنپ‌پی</span></label></td></tr>
+            <tr><th scope="row"><label for="fee_title">عنوان هزینه در فاکتور</label></th><td>
+              <input class="inp" id="fee_title" type="text" data-str="fee_title"></td></tr>
+            <tr><th scope="row"><label for="fee_percentage">درصد کارمزد افزایشی (٪)</label></th><td>
+              <input class="inp short num" id="fee_percentage" type="number" min="0" max="100" step="0.5" inputmode="decimal" data-num="fee_percentage">
+              <p class="description">درصدی که به جمع محصولات و حمل اضافه می‌شود.</p></td></tr>
+          </tbody></table>
+
+          <h2 class="sh">محدودیت‌های نمایش و دسترسی به درگاه</h2>
+          <p class="sd">در صورت نقض هر شرط، درگاه اسنپ‌پی در تسویه‌حساب مخفی و در سمت سرور هم اعتبارسنجی می‌شود.</p>
+          <table class="form-table" role="presentation"><tbody>
+            <tr><th scope="row">محدودیت محصولات حراج</th><td>
+              <label class="chk"><input type="checkbox" id="disable_on_sale" data-bool="disable_on_sale"><span>غیرفعال‌سازی اسنپ‌پی در صورت وجود محصول فروش ویژه در سبد</span></label></td></tr>
+            <tr><th scope="row"><label for="mode">نوع محدودیت دسته‌بندی</label></th><td>
+              <select class="inp" id="mode" data-str="mode">
+                <option value="none">بدون محدودیت دسته‌بندی</option>
+                <option value="allowed_only">فقط مجاز برای دسته‌های انتخابی</option>
+                <option value="disallowed">غیرمجاز برای دسته‌های انتخابی</option>
+              </select></td></tr>
+            <tr><th scope="row">انتخاب دسته‌بندی‌ها</th><td>
+              <div class="chips" id="cats" role="group" aria-label="دسته‌بندی‌ها"></div>
+              <p class="description">شامل زیرمجموعه‌ها هم می‌شود. با حالت «بدون محدودیت» اثری ندارد.</p></td></tr>
+            <tr><th scope="row"><label for="min">حداقل مبلغ مجاز (تومان)</label></th><td>
+              <input class="inp num" id="min" type="text" inputmode="numeric" placeholder="بدون محدودیت" autocomplete="off"></td></tr>
+            <tr><th scope="row"><label for="max">حداکثر مبلغ مجاز (تومان)</label></th><td>
+              <input class="inp num" id="max" type="text" inputmode="numeric" placeholder="بدون محدودیت" autocomplete="off"></td></tr>
+            <tr><th scope="row">روزهای مجاز هفته</th><td>
+              <div class="chips" id="days" role="group" aria-label="روزهای مجاز"></div></td></tr>
+          </tbody></table>
+
+          <details class="more">
+            <summary>متن پیام‌ها و خطاهای سفارشی</summary>
+            <table class="form-table" role="presentation"><tbody id="msgs"></tbody></table>
+          </details>
+
+          <div class="sandbox">
+            <h4>تنظیمات دمو (در افزونهٔ واقعی وجود ندارد)</h4>
+            <div class="row">
+              <label for="today">امروز چه روزی است؟</label>
+              <select class="inp" id="today" style="max-width:160px"></select>
+              <button class="button sm" type="button" id="reset">بازگشت به حالت اولیه</button>
+            </div>
+            <p class="description" style="margin:0">تغییرات این پنل بلافاصله اعمال می‌شوند و دکمهٔ ذخیره ندارند.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer checkout -->
+      <section class="postbox panel-shop shop" aria-labelledby="shop-h">
+        <h3 id="shop-h">نمای مشتری · تسویه‌حساب</h3>
+        <div class="inside">
+          <div class="notices" id="notices" aria-live="polite"></div>
+
+          <h4>سبد خرید</h4>
+          <div id="cart"></div>
+          <p class="shelf-label">افزودن محصول نمونه</p>
+          <div class="shelf" id="shelf"></div>
+
+          <h4>کد تخفیف</h4>
+          <form class="cform" id="cform" autocomplete="off">
+            <input class="inp" id="ccode" type="text" placeholder="WELCOME10" aria-label="کد تخفیف" dir="ltr">
+            <button class="button" type="submit">اعمال کوپن</button>
+          </form>
+          <div class="applied" id="applied"></div>
+          <p class="cnote">کدهای نمونه: <span class="mono">WELCOME10</span> (۱۰٪ تخفیف) و <span class="mono">SAVE500</span> (۵۰۰٬۰۰۰ تومان)</p>
+
+          <h4>روش پرداخت</h4>
+          <div class="pays" id="pays" role="radiogroup" aria-label="روش پرداخت"></div>
+
+          <h4>سفارش شما</h4>
+          <table class="sum" id="sum"></table>
+          <button class="place" type="button" id="place">ثبت سفارش</button>
+
+          <details class="payload" id="payload" hidden>
+            <summary>اقلام ارسالی به API اسنپ‌پی (نمایش ساده‌شده)</summary>
+            <div class="scroll" id="payload-body"></div>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <div class="under">
+      <section class="postbox" aria-labelledby="rules-h">
+        <h3 id="rules-h">چرا اسنپ‌پی نمایش داده می‌شود یا نمی‌شود؟</h3>
+        <div class="inside">
+          <p class="sub">وضعیت هر قانون برای سبد فعلی. همین بررسی هنگام ثبت سفارش دوباره در سمت سرور اجرا می‌شود.</p>
+          <ul class="rules" id="rules"></ul>
+        </div>
+      </section>
+      <section class="postbox" aria-labelledby="log-h">
+        <h3 id="log-h">هوک‌هایی که وارد عمل شدند</h3>
+        <div class="inside">
+          <p class="sub">با هر تغییر، آخرین رویدادها اینجا ثبت می‌شوند.</p>
+          <ul class="log" id="log" aria-live="polite"></ul>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="setup">
+  <div class="wrap">
+    <h2 class="sec-h">نصب در سه قدم</h2>
+    <p class="sec-lead">بدون کدنویسی و بدون تغییر در افزونهٔ اصلی.</p>
+    <div class="steps">
+      <div class="postbox"><h3>۱ · ووکامرس و افزونهٔ اصلی</h3><div class="inside"><p>ووکامرس و «درگاه پرداخت اسنپ‌پی ووکامرس» را نصب و فعال کنید. بدون این دو، افزونه اجرا نمی‌شود.</p></div></div>
+      <div class="postbox"><h3>۲ · فعال‌سازی پی‌تون اسنپ پی</h3><div class="inside"><p>افزونه را نصب و فعال کنید. اگر وابستگی‌ها کم باشد، در پیشخوان اعلان خطا می‌بینید.</p></div></div>
+      <div class="postbox"><h3>۳ · تنظیم قوانین</h3><div class="inside"><p>از ووکامرس، تنظیمات، تب «قوانین پیشرفته اسنپ‌پی» یا لینک افزونه در صفحهٔ افزونه‌ها وارد شوید.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <h2 class="sec-h">پرسش‌های رایج</h2>
+    <p class="sec-lead">پاسخ‌ها بر اساس رفتار واقعی کد افزونه است.</p>
+    <div class="postbox"><div class="inside faq">
+      <details>
+        <summary>بدون افزونهٔ اصلی اسنپ‌پی هم کار می‌کند؟</summary>
+        <p>خیر. اگر ووکامرس یا افزونهٔ اصلی درگاه اسنپ‌پی فعال نباشد، افزونه اجرا نمی‌شود و برای مدیر اعلان خطا نشان می‌دهد.</p>
+      </details>
+      <details>
+        <summary>کارمزد از چه مبلغی حساب می‌شود؟</summary>
+        <p>از جمع کالاها پس از کسر تخفیف به‌علاوهٔ هزینهٔ حمل. اگر مبنای دیگری می‌خواهید، فیلتر <span class="mono">snapppay_booster_fee_base_amount</span> آن را عوض می‌کند.</p>
+      </details>
+      <details>
+        <summary>اگر مشتری روش پرداخت را عوض کند چه می‌شود؟</summary>
+        <p>تسویه‌حساب بدون بارگذاری مجدد به‌روز می‌شود. با انتخاب اسنپ‌پی کارمزد اضافه می‌شود و کدهای تخفیف (اگر قانونش روشن باشد) حذف می‌شوند. با برگشت به روش دیگر، کارمزد برداشته می‌شود.</p>
+      </details>
+      <details>
+        <summary>محدودیت‌ها فقط ظاهری هستند؟</summary>
+        <p>خیر. علاوه بر مخفی شدن درگاه، هنگام ثبت سفارش همهٔ قوانین دوباره در سمت سرور بررسی می‌شوند و در صورت تخطی پیام خطا نمایش داده می‌شود.</p>
+      </details>
+      <details>
+        <summary>برای توسعه‌دهندگان چه فیلترهایی هست؟</summary>
+        <ul class="hooks">
+          <li>مبنای محاسبهٔ کارمزد<code>snapppay_booster_fee_base_amount</code></li>
+          <li>خطاهای محدودیت پیش از اعمال<code>snapppay_booster_restriction_errors</code></li>
+          <li>مبلغ مقایسه‌شده برای کف و سقف<code>snapppay_booster_comparable_cart_amount</code></li>
+        </ul>
+      </details>
+    </div></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">پی‌تون اسنپ پی · نسخهٔ ۱٫۰٫۰ · افزونهٔ مکمل درگاه اسنپ‌پی برای ووکامرس. نام‌ها و قیمت‌های محصولات دمو فرضی هستند.</div>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const $ = (s, r) => (r || document).querySelector(s);
+const nf = new Intl.NumberFormat('fa-IR');
+const fmt = n => nf.format(Math.round(n));
+const money = n => fmt(n) + ' تومان';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toEn = s => String(s)
+  .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+  .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+  .replace(/٫/g, '.')
+  .replace(/[٬,،\s]/g, '');
+
+/* ---------- store data ---------- */
+const DAYS = [['saturday','شنبه',6],['sunday','یکشنبه',0],['monday','دوشنبه',1],['tuesday','سه‌شنبه',2],['wednesday','چهارشنبه',3],['thursday','پنج‌شنبه',4],['friday','جمعه',5]];
+const CATS = {12:{n:'لوازم دیجیتال',p:0},14:{n:'موبایل',p:12},15:{n:'لوازم جانبی',p:12},20:{n:'خانه و آشپزخانه',p:0},30:{n:'کتاب و لوازم‌التحریر',p:0},40:{n:'کارت هدیه',p:0}};
+const catLabel = c => CATS[c].p ? CATS[CATS[c].p].n + ' ‹ ' + CATS[c].n : CATS[c].n;
+const PRODUCTS = [
+  {id:1,name:'گوشی هوشمند آوا ۱۲۸ گیگابایت',cat:[14],price:18500000,sale:null},
+  {id:2,name:'هدفون بی‌سیم نوا',cat:[15],price:3200000,sale:2560000},
+  {id:3,name:'ماگ سرامیکی دست‌ساز',cat:[20],price:380000,sale:null},
+  {id:4,name:'کتاب «ساختمان داده‌ها»',cat:[30],price:450000,sale:null},
+  {id:5,name:'کارت هدیه یک‌میلیون‌تومانی',cat:[40],price:1000000,sale:null}
+];
+const P = id => PRODUCTS.find(p => p.id === id);
+const unit = p => p.sale != null ? p.sale : p.price;
+const SHIP = 120000;
+const COUPONS = {WELCOME10: sub => Math.round(sub * 0.1), SAVE500: () => 500000};
+const METHODS = [
+  {id:'bank',t:'پرداخت آنلاین با کارت بانکی',d:'انتقال به درگاه بانکی'},
+  {id:'cod',t:'پرداخت در محل',d:'پرداخت هنگام تحویل'},
+  {id:'snapp',t:'پرداخت اقساطی اسنپ‌پی',d:'همین حالا بخرید، در چند قسط بپردازید'}
+];
+const MSG0 = {
+  coupon_removed:'کدهای تخفیف در صورت انتخاب روش پرداخت اقساطی اسنپ‌پی قابل استفاده نیستند و از سبد خرید حذف شدند.',
+  coupon_blocked:'امکان اعمال کد تخفیف هنگام استفاده از درگاه پرداخت اقساطی اسنپ‌پی وجود ندارد.',
+  on_sale:'پرداخت با اسنپ‌پی برای سبدهای خرید حاوی محصولات فروش ویژه (حراج) غیرفعال است.',
+  category:'برخی از محصولات موجود در سبد خرید شما مشمول شرایط پرداخت اقساطی اسنپ‌پی نمی‌باشند.',
+  min_amount:'حداقل مبلغ مجاز فاکتور برای پرداخت با اسنپ‌پی {min_amount} است.',
+  max_amount:'حداکثر مبلغ مجاز فاکتور برای پرداخت با اسنپ‌پی {max_amount} است.',
+  day_of_week:'امکان ثبت سفارش با درگاه اقساطی اسنپ‌پی در روز {day_name} فعال نیست.'
+};
+const MSG_LABELS = {
+  coupon_removed:'پیام حذف خودکار کد تخفیف', coupon_blocked:'خطای تلاش برای ثبت کد تخفیف', on_sale:'خطای محصول حراج در سبد',
+  category:'خطای محدودیت دسته‌بندی', min_amount:'خطای کمتر بودن از حداقل مبلغ',
+  max_amount:'خطای بیشتر بودن از حداکثر مبلغ', day_of_week:'خطای غیرمجاز بودن روز هفته'
+};
+const MSG_CODES = {min_amount:'{min_amount}', max_amount:'{max_amount}', day_of_week:'{day_name}'};
+
+/* ---------- state ---------- */
+const defSettings = () => ({
+  enabled:true, disable_coupons:true, fee_enabled:true, fee_title:'کارمزد خرید اقساطی اسنپ‌پی', fee_percentage:3,
+  disable_on_sale:false, mode:'none', cats:[], min:1000000, max:40000000, days:DAYS.map(d => d[0]), msgs:Object.assign({}, MSG0)
+});
+const defEnv = () => ({today:new Date().getDay(), method:'bank', cart:[{id:1,q:1},{id:3,q:1}], coupons:['WELCOME10']});
+let S = defSettings();
+let E = defEnv();
+let notices = [];
+let logs = [];
+let prev = null;
+let V = null;
+let activeScen = null;
+
+const SCEN = [
+  {id:'coupon', t:'کد تخفیف', hint:'کد WELCOME10 اعمال شده. روش پرداخت را روی «اسنپ‌پی» بگذارید تا کد از سبد حذف شود.', apply(){ S.fee_enabled = false; }},
+  {id:'fee', t:'کارمزد ۳٪', hint:'اسنپ‌پی انتخاب شده و ردیف کارمزد به فاکتور اضافه شده. درصد را تغییر دهید یا روش پرداخت را عوض کنید.', apply(){ E.method = 'snapp'; E.coupons = []; S.disable_coupons = false; }},
+  {id:'sale', t:'محصول حراج', hint:'هدفون داخل سبد فروش ویژه دارد، پس اسنپ‌پی مخفی شده. آن را از سبد حذف کنید تا درگاه برگردد.', apply(){ S.disable_on_sale = true; S.fee_enabled = false; E.cart = [{id:1,q:1},{id:2,q:1}]; E.coupons = []; }},
+  {id:'cat', t:'دستهٔ ممنوع', hint:'کارت هدیه در دستهٔ ممنوع است. آن را حذف کنید یا حالت دسته‌بندی را عوض کنید.', apply(){ S.mode = 'disallowed'; S.cats = [40]; S.fee_enabled = false; E.cart = [{id:3,q:1},{id:5,q:1}]; E.coupons = []; }},
+  {id:'max', t:'سقف مبلغ', hint:'سقف مبلغ ۱۵ میلیون تومان است ولی سبد بیشتر می‌شود. سقف را بالا ببرید یا گوشی را حذف کنید.', apply(){ S.max = 15000000; S.fee_enabled = false; E.coupons = []; }},
+  {id:'day', t:'روز غیرمجاز', hint:'جمعه از روزهای مجاز خارج شده و «امروز» روی جمعه است. یک روز دیگر را به‌عنوان امروز انتخاب کنید.', apply(){ E.today = 5; S.days = DAYS.map(d => d[0]).filter(k => k !== 'friday'); S.fee_enabled = false; E.coupons = []; }}
+];
+
+/* ---------- rule engine (mirrors the plugin's PHP) ---------- */
+function totals(){
+  const items = E.cart.map(i => ({p:P(i.id), q:i.q}));
+  const sub = items.reduce((a, i) => a + unit(i.p) * i.q, 0);
+  let disc = E.coupons.reduce((a, c) => a + COUPONS[c](sub), 0);
+  disc = Math.min(disc, sub);
+  const contents = sub - disc;
+  const ship = items.length ? SHIP : 0;
+  return {items, sub, disc, contents, ship, comparable: contents + ship};
+}
+function catIds(p){
+  const out = new Set();
+  p.cat.forEach(c => { let x = c; while (x) { out.add(x); x = CATS[x].p; } });
+  return out;
+}
+function catOk(t){
+  if (S.mode === 'none' || !S.cats.length || !t.items.length) return true;
+  for (const i of t.items) {
+    const ids = catIds(i.p);
+    const hit = S.cats.some(c => ids.has(c));
+    if (S.mode === 'disallowed' && hit) return false;
+    if (S.mode === 'allowed_only' && !hit) return false;
+  }
+  return true;
+}
+function getRules(t){
+  const day = DAYS.find(d => d[2] === E.today);
+  const amt = t.comparable;
+  const dayOk = S.days.length > 0 && S.days.includes(day[0]);
+  const minOn = S.min > 0, maxOn = S.max > 0;
+  const saleOn = S.disable_on_sale;
+  const catOn = S.mode !== 'none' && S.cats.length > 0;
+  return [
+    {k:'day', label:'روز هفته', active:true, ok:dayOk,
+      detail:'امروز در شبیه‌ساز ' + day[1] + ' است' + (S.days.length ? '' : ' و هیچ روزی مجاز نیست'),
+      msg:S.msgs.day_of_week.split('{day_name}').join(day[1])},
+    {k:'min', label:'حداقل مبلغ سبد', active:minOn, ok:!(minOn && amt < S.min),
+      detail:minOn ? 'مبلغ سبد ' + money(amt) + ' · حداقل ' + money(S.min) : 'بدون محدودیت',
+      msg:S.msgs.min_amount.split('{min_amount}').join(money(S.min))},
+    {k:'max', label:'حداکثر مبلغ سبد', active:maxOn, ok:!(maxOn && amt > S.max),
+      detail:maxOn ? 'مبلغ سبد ' + money(amt) + ' · حداکثر ' + money(S.max) : 'بدون محدودیت',
+      msg:S.msgs.max_amount.split('{max_amount}').join(money(S.max))},
+    {k:'sale', label:'محصول حراج', active:saleOn, ok:!(saleOn && t.items.some(i => i.p.sale != null)),
+      detail:saleOn ? 'محصول حراجی در سبد نیست' : 'قانون خاموش است', msg:S.msgs.on_sale},
+    {k:'cat', label:'دسته‌بندی محصول', active:catOn, ok:catOk(t),
+      detail:catOn ? 'همهٔ اقلام با قانون دسته‌بندی سازگارند' : 'بدون محدودیت', msg:S.msgs.category}
+  ];
+}
+function pushLog(hook, text){
+  logs.unshift({hook, text});
+  if (logs.length > 8) logs.length = 8;
+}
+function evaluate(){
+  let t = totals();
+  let rules = getRules(t);
+  let errs = S.enabled ? rules.filter(r => r.active && !r.ok) : [];
+  // woocommerce_before_calculate_totals: strip coupons when SnappPay is chosen and selectable
+  if (S.enabled && S.disable_coupons && E.method === 'snapp' && E.coupons.length && errs.length === 0) {
+    E.coupons = [];
+    notices.push({t:'info', x:S.msgs.coupon_removed});
+    pushLog('woocommerce_before_calculate_totals', 'کدهای تخفیف از سبد برداشته شد');
+    t = totals();
+    rules = getRules(t);
+    errs = rules.filter(r => r.active && !r.ok);
+  }
+  const avail = errs.length === 0;
+  const eff = (E.method === 'snapp' && !avail) ? 'bank' : E.method;
+  let fee = 0;
+  const feeOn = S.enabled && S.fee_enabled && S.fee_percentage > 0;
+  if (feeOn && eff === 'snapp') {
+    const base = t.contents + t.ship;
+    if (base > 0) fee = Math.round(base * S.fee_percentage / 100);
+  }
+  const total = t.contents + t.ship + fee;
+  return {t, rules, errs, avail, eff, fee, feeOn, total};
+}
+
+/* ---------- rendering ---------- */
+function renderStatus(){
+  const on = V.avail || !S.enabled;
+  $('#statusbar').innerHTML =
+    '<div class="st-item"><small>اسنپ‌پی در تسویه‌حساب</small><b><span class="dot' + (on ? '' : ' off') + '"></span>' + (on ? 'نمایش داده می‌شود' : 'مخفی است') + '</b></div>' +
+    '<div class="st-item"><small>کارمزد اسنپ‌پی</small><b>' + (V.fee ? money(V.fee) : '—') + '</b></div>' +
+    '<div class="st-item"><small>کد تخفیف</small><b>' + (E.coupons.length ? fmt(E.coupons.length) + ' کد اعمال شده' : 'بدون کد') + '</b></div>' +
+    '<div class="st-item"><small>مبلغ قابل پرداخت</small><b>' + money(V.total) + '</b></div>';
+}
+function renderNotices(){
+  $('#notices').innerHTML = notices.map(n => '<div class="n ' + n.t + '">' + esc(n.x) + '</div>').join('');
+}
+function renderCart(){
+  const box = $('#cart');
+  if (!V.t.items.length) { box.innerHTML = '<p class="empty">سبد خرید خالی است. از فهرست زیر محصول اضافه کنید.</p>'; return; }
+  box.innerHTML = V.t.items.map(({p, q}) =>
+    '<div class="cart-row">' +
+      '<div class="cr-name">' + esc(p.name) + '</div>' +
+      '<button class="icon-btn" type="button" data-rm="' + p.id + '" aria-label="حذف ' + esc(p.name) + '">×</button>' +
+      '<div class="cr-meta">' + p.cat.map(c => '<span class="tagc">' + esc(catLabel(c)) + '</span>').join('') + (p.sale != null ? '<span class="tagc sale">فروش ویژه</span>' : '') + '</div>' +
+      '<div class="cr-buy"><span class="price">' + (p.sale != null ? '<s>' + fmt(p.price) + '</s>' : '') + fmt(unit(p)) + '</span>' +
+      '<span class="qty"><button type="button" data-dec="' + p.id + '" aria-label="کم کردن تعداد">−</button><output>' + fmt(q) + '</output><button type="button" data-inc="' + p.id + '" aria-label="زیاد کردن تعداد">+</button></span></div>' +
+    '</div>').join('');
+}
+function renderApplied(){
+  $('#applied').innerHTML = E.coupons.map(c => '<span class="tagc"><span class="mono">' + esc(c) + '</span><button type="button" data-rc="' + esc(c) + '" aria-label="حذف کد ' + esc(c) + '">×</button></span>').join('');
+}
+function renderPays(){
+  const feeHint = V.feeOn ? '<span class="badge">کارمزد ' + fmt(S.fee_percentage) + '٪</span>' : '';
+  $('#pays').innerHTML = METHODS.map(m => {
+    if (m.id === 'snapp' && !V.avail && S.enabled) {
+      return '<div class="pay gone"><div><b>' + m.t + '</b><small>در تسویه‌حساب واقعی این گزینه نمایش داده نمی‌شود</small></div>' +
+        '<ul class="why">' + V.errs.map(r => '<li>' + esc(r.msg) + '</li>').join('') + '</ul>' +
+        '<button class="button sm stale" type="button" id="stale">ارسال دستی فرم با اسنپ‌پی (تب قدیمی)</button></div>';
+    }
+    const sel = V.eff === m.id;
+    return '<label class="pay' + (sel ? ' sel' : '') + '"><input type="radio" name="payment_method" value="' + m.id + '"' + (sel ? ' checked' : '') + '>' +
+      '<span><b>' + m.t + (m.id === 'snapp' ? feeHint : '') + '</b><small>' + m.d + '</small></span></label>';
+  }).join('');
+}
+function renderSum(){
+  const t = V.t;
+  let h = '<tr><td>جمع محصولات</td><td>' + money(t.sub) + '</td></tr>';
+  if (t.disc) h += '<tr class="disc"><td>تخفیف (' + E.coupons.join('، ') + ')</td><td>−' + money(t.disc) + '</td></tr>';
+  h += '<tr><td>حمل و نقل</td><td>' + (t.ship ? money(t.ship) : '—') + '</td></tr>';
+  if (V.fee) h += '<tr class="fee"><td>' + esc(S.fee_title) + ' (' + fmt(S.fee_percentage) + '٪)</td><td>+' + money(V.fee) + '</td></tr>';
+  h += '<tr class="total"><td>مبلغ قابل پرداخت</td><td>' + money(V.total) + '</td></tr>';
+  $('#sum').innerHTML = h;
+}
+function renderPayload(){
+  const box = $('#payload');
+  const show = V.eff === 'snapp' && V.t.items.length > 0;
+  box.hidden = !show;
+  if (!show) return;
+  const R = n => fmt(n * 10);
+  const t = V.t;
+  const rows = t.items.map(({p, q}) => '<tr><td>' + esc(p.name) + '</td><td class="r">' + fmt(q) + '</td><td class="r">' + R(unit(p)) + '</td><td>' + esc(catLabel(p.cat[0])) + '</td></tr>').join('');
+  const feeRow = V.fee ? '<tr class="fee"><td>' + esc(S.fee_title) + '</td><td class="r">۱</td><td class="r">' + R(V.fee) + '</td><td>خدمات و کارمزد</td></tr>' : '';
+  const withFee = t.sub + V.fee + t.ship - t.disc;
+  let eq = '<p class="eq">اقلام ' + R(t.sub + V.fee) + ' + حمل ' + R(t.ship) + (t.disc ? ' − تخفیف ' + R(t.disc) : '') + ' = <b>' + R(withFee) + ' ریال</b>، برابر مبلغ کل سفارش (' + R(V.total) + ' ریال).';
+  if (V.fee) eq += ' بدون ثبت ردیف کارمزد در اقلام، جمع اقلام ' + R(V.fee) + ' ریال با مبلغ کل اختلاف پیدا می‌کرد.';
+  eq += '</p>';
+  $('#payload-body').innerHTML = '<table class="pt"><thead><tr><th>نام</th><th>تعداد</th><th>مبلغ (ریال)</th><th>دسته</th></tr></thead><tbody>' + rows + feeRow + '</tbody></table>' + eq;
+}
+function renderRules(){
+  const row = (label, pillCls, pillTxt, text, bad) =>
+    '<li class="rule' + (bad ? ' bad' : '') + '"><b>' + label + '</b><span class="pill ' + pillCls + '">' + pillTxt + '</span><p>' + esc(text) + '</p></li>';
+  let h = '<li class="rgroup">شرایط نمایش درگاه</li>';
+  V.rules.forEach(r => {
+    if (!S.enabled || !r.active) h += row(r.label, 'off', 'غیرفعال', S.enabled ? r.detail : 'قوانین پیشرفته خاموش است', false);
+    else if (r.ok) h += row(r.label, 'ok', 'برقرار', r.detail, false);
+    else h += row(r.label, 'bad', 'مانع نمایش', r.msg, true);
+  });
+  h += '<li class="rgroup">رفتار هنگام انتخاب اسنپ‌پی</li>';
+  const cOn = S.enabled && S.disable_coupons;
+  h += row('حذف کد تخفیف', cOn ? 'on' : 'off', cOn ? 'فعال' : 'غیرفعال', cOn ? 'کدهای تخفیف برداشته می‌شوند و ثبت کد جدید رد می‌شود.' : 'کد تخفیف با اسنپ‌پی آزاد است.', false);
+  h += row('کارمزد درصدی', V.feeOn ? 'on' : 'off', V.feeOn ? 'فعال' : 'غیرفعال', V.feeOn ? 'کارمزد ' + fmt(S.fee_percentage) + '٪ روی کالا و حمل اضافه می‌شود.' : 'کارمزدی اضافه نمی‌شود.', false);
+  $('#rules').innerHTML = h;
+}
+function renderLog(){
+  $('#log').innerHTML = logs.length
+    ? logs.map(l => '<li><code>' + esc(l.hook) + '</code><span>' + esc(l.text) + '</span></li>').join('')
+    : '<li class="none">روش پرداخت یا تنظیمات را تغییر دهید تا ببینید کدام هوک افزونه اجرا می‌شود.</li>';
+}
+function render(){
+  V = evaluate();
+  if (prev) {
+    if (V.avail !== prev.avail && S.enabled) {
+      pushLog('woocommerce_available_payment_gateways', V.avail ? 'شرایط برقرار شد و اسنپ‌پی دوباره نمایش داده می‌شود' : 'اسنپ‌پی از لیست درگاه‌ها حذف شد: ' + V.errs.map(r => r.label).join('، '));
+    }
+    if (V.fee !== prev.fee) {
+      if (V.fee && !prev.fee) pushLog('woocommerce_cart_calculate_fees', 'add_fee(«' + S.fee_title + '», ' + money(V.fee) + ')');
+      else if (!V.fee) pushLog('woocommerce_cart_calculate_fees', 'ردیف کارمزد از فاکتور برداشته شد');
+      else pushLog('woocommerce_cart_calculate_fees', 'کارمزد به ' + money(V.fee) + ' به‌روز شد');
+    }
+  }
+  prev = {avail:V.avail, fee:V.fee};
+  renderStatus(); renderNotices(); renderCart(); renderApplied(); renderPays(); renderSum(); renderPayload(); renderRules(); renderLog();
+}
+function act(fn){ notices = []; fn(); render(); }
+
+/* ---------- controls ---------- */
+function buildStatic(){
+  $('#scen').innerHTML = '<button type="button" class="chip" data-scen="reset" aria-pressed="false">حالت اولیه</button>' +
+    SCEN.map(s => '<button type="button" class="chip" data-scen="' + s.id + '" aria-pressed="false">' + s.t + '</button>').join('');
+  $('#cats').innerHTML = Object.keys(CATS).map(id => '<button type="button" class="chip" data-cat="' + id + '" aria-pressed="false">' + esc(catLabel(+id)) + '</button>').join('');
+  $('#shelf').innerHTML = PRODUCTS.map(p => '<button type="button" class="chip" data-add="' + p.id + '">+ ' + esc(p.name) + (p.sale != null ? ' <i>حراج</i>' : '') + '</button>').join('');
+  $('#msgs').innerHTML = Object.keys(MSG0).map(k =>
+    '<tr><th scope="row"><label for="msg_' + k + '">' + esc(MSG_LABELS[k]) + '</label></th><td><textarea class="inp" id="msg_' + k + '" data-msg="' + k + '" rows="2"></textarea>' +
+    (MSG_CODES[k] ? '<p class="description">شورت‌کد قابل استفاده: <code>' + MSG_CODES[k] + '</code></p>' : '') + '</td></tr>').join('');
+  $('#today').innerHTML = DAYS.map(d => '<option value="' + d[2] + '">' + d[1] + '</option>').join('');
+}
+function syncUI(){
+  document.querySelectorAll('[data-bool]').forEach(el => { el.checked = !!S[el.dataset.bool]; });
+  document.querySelectorAll('[data-str]').forEach(el => { el.value = S[el.dataset.str]; });
+  $('#fee_percentage').value = S.fee_percentage;
+  $('#min').value = S.min > 0 ? fmt(S.min) : '';
+  $('#max').value = S.max > 0 ? fmt(S.max) : '';
+  document.querySelectorAll('[data-msg]').forEach(el => { el.value = S.msgs[el.dataset.msg]; });
+  $('#today').value = String(E.today);
+  $('#cats').classList.toggle('dim', S.mode === 'none');
+  document.querySelectorAll('[data-cat]').forEach(el => el.setAttribute('aria-pressed', String(S.cats.includes(+el.dataset.cat))));
+  $('#days').innerHTML = DAYS.map(d => '<button type="button" class="chip" data-day="' + d[0] + '" aria-pressed="' + S.days.includes(d[0]) + '">' + d[1] + (d[2] === E.today ? '<span class="today">امروز</span>' : '') + '</button>').join('');
+  document.querySelectorAll('[data-scen]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.scen === activeScen)));
+  $('#hint').textContent = activeScen && activeScen !== 'reset' ? SCEN.find(s => s.id === activeScen).hint : 'برای دیدن اثر هر قانون، یکی از سناریوها را انتخاب کنید یا خودتان تنظیمات را تغییر دهید.';
+}
+function applyScenario(id){
+  S = defSettings(); E = defEnv(); notices = []; activeScen = id;
+  if (id !== 'reset') SCEN.find(s => s.id === id).apply();
+  logs = []; prev = null;
+  syncUI(); render();
+  pushLog('scenario', id === 'reset' ? 'بازگشت به حالت اولیه' : 'سناریو «' + SCEN.find(s => s.id === id).t + '» بارگذاری شد');
+  renderLog();
+}
+function setView(v){
+  $('#sim').dataset.view = v;
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === v)));
+}
+
+function bind(){
+  const sim = $('#sim');
+  sim.addEventListener('change', e => {
+    const el = e.target;
+    if (el.dataset.bool) { act(() => { S[el.dataset.bool] = el.checked; }); }
+    else if (el.id === 'mode') { act(() => { S.mode = el.value; $('#cats').classList.toggle('dim', S.mode === 'none'); }); }
+    else if (el.id === 'today') { act(() => { E.today = +el.value; syncUI(); }); }
+    else if (el.id === 'min' || el.id === 'max') { el.value = S[el.id] > 0 ? fmt(S[el.id]) : ''; }
+    else if (el.name === 'payment_method') { act(() => { E.method = el.value; }); }
+  });
+  sim.addEventListener('input', e => {
+    const el = e.target;
+    if (el.dataset.str && el.tagName !== 'SELECT') { act(() => { S[el.dataset.str] = el.value; }); }
+    else if (el.dataset.num) { act(() => { const v = parseFloat(toEn(el.value)); S[el.dataset.num] = isFinite(v) ? Math.min(100, Math.max(0, v)) : 0; }); }
+    else if (el.dataset.msg) { act(() => { S.msgs[el.dataset.msg] = el.value; }); }
+    else if (el.id === 'min' || el.id === 'max') { act(() => { const v = parseFloat(toEn(el.value)); S[el.id] = isFinite(v) && v > 0 ? v : 0; }); }
+  });
+  sim.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    const d = b.dataset;
+    if (d.day) { act(() => { const i = S.days.indexOf(d.day); if (i >= 0) S.days.splice(i, 1); else S.days.push(d.day); syncUI(); }); }
+    else if (d.cat) { act(() => { const c = +d.cat, i = S.cats.indexOf(c); if (i >= 0) S.cats.splice(i, 1); else S.cats.push(c); syncUI(); }); }
+    else if (d.add) { act(() => { const id = +d.add, it = E.cart.find(x => x.id === id); if (it) it.q = Math.min(9, it.q + 1); else E.cart.push({id, q:1}); }); }
+    else if (d.inc) { act(() => { const it = E.cart.find(x => x.id === +d.inc); if (it) it.q = Math.min(9, it.q + 1); }); }
+    else if (d.dec) { act(() => { const it = E.cart.find(x => x.id === +d.dec); if (it) { it.q -= 1; if (it.q <= 0) E.cart = E.cart.filter(x => x !== it); } }); }
+    else if (d.rm) { act(() => { E.cart = E.cart.filter(x => x.id !== +d.rm); }); }
+    else if (d.rc) { act(() => { E.coupons = E.coupons.filter(c => c !== d.rc); }); }
+    else if (b.id === 'stale') { act(staleSubmit); }
+    else if (b.id === 'place') { act(placeOrder); }
+    else if (b.id === 'reset') { applyScenario('reset'); }
+  });
+  $('#cform').addEventListener('submit', e => {
+    e.preventDefault();
+    const code = $('#ccode').value.trim().toUpperCase();
+    if (!code) return;
+    act(() => {
+      if (E.coupons.includes(code)) notices.push({t:'error', x:'این کد تخفیف قبلاً اعمال شده است.'});
+      else if (!COUPONS[code]) notices.push({t:'error', x:'کد تخفیف «' + code + '» معتبر نیست.'});
+      else if (S.enabled && S.disable_coupons && V && V.eff === 'snapp') {
+        notices.push({t:'error', x:S.msgs.coupon_blocked});
+        pushLog('woocommerce_coupon_is_valid', 'استثنا با کد ۱۰۹: ثبت کد «' + code + '» رد شد');
+      } else { E.coupons.push(code); notices.push({t:'success', x:'کد تخفیف اعمال شد.'}); $('#ccode').value = ''; }
+    });
+  });
+  $('#scen').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (b) applyScenario(b.dataset.scen);
+  });
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+}
+function staleSubmit(){
+  pushLog('woocommerce_checkout_process', 'اعتبارسنجی سمت سرور: ' + fmt(V.errs.length) + ' خطا برای فرمی که با اسنپ‌پی ارسال شد');
+  if (S.disable_coupons && E.coupons.length) { E.coupons = []; notices.push({t:'error', x:S.msgs.coupon_blocked}); }
+  V.errs.forEach(r => notices.push({t:'error', x:r.msg}));
+}
+function placeOrder(){
+  if (!V.t.items.length) { notices.push({t:'error', x:'سبد خرید خالی است.'}); return; }
+  const m = METHODS.find(x => x.id === V.eff);
+  notices.push({t:'success', x:'دمو: سفارش با روش «' + m.t + '» به مبلغ ' + money(V.total) + ' ثبت می‌شد. چیزی ارسال نشد.'});
+}
+
+buildStatic();
+bind();
+activeScen = 'reset';
+syncUI();
+render();
+})();
+</script>
+
+</body></html>
